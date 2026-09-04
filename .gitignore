@@ -2,8 +2,9 @@
 *.tfstate
 *.tfstate.*
 *.tfstate.backup
+# .terraform.lock.hcl SI se versiona: es lo que fija el hash exacto de cada
+# provider y hace reproducible el init en otra maquina y en CI.
 .terraform/
-.terraform.lock.hcl
 crash.log
 crash.*.log
 override.tf
