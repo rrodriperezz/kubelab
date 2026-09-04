@@ -96,7 +96,8 @@ demo_responde() {
 # TARGETS en <unknown>.
 hpa_con_metricas() {
   local uso
-  uso="$(k get hpa demo -n demo     -o jsonpath='{.status.currentMetrics[0].resource.current.averageUtilization}')"
+  local ruta='{.status.currentMetrics[0].resource.current.averageUtilization}'
+  uso="$(k get hpa demo -n demo -o jsonpath="$ruta")"
   [ -n "$uso" ] && [ "$uso" -ge 0 ] 2>/dev/null
 }
 
