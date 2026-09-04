@@ -40,6 +40,12 @@ options:
       - arg: --disable=servicelb
         nodeFilters:
           - server:*
+      # k3s trae su propio metrics-server y es dueño de ClusterRole
+      # system:metrics-server. Si queda activo, el chart de Helm aborta con
+      # "invalid ownership metadata" en vez de instalarse.
+      - arg: --disable=metrics-server
+        nodeFilters:
+          - server:*
   kubeconfig:
     updateDefaultKubeconfig: true
     switchCurrentContext: true
