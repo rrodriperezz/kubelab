@@ -101,12 +101,14 @@ jobs:
           soft_fail: false
 
       - name: trivy config
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@0.36.0
         with:
           scan-type: config
           scan-ref: .
           severity: HIGH,CRITICAL
           exit-code: "1"
+          # Directorios de herramientas locales, no forman parte del repositorio.
+          skip-dirs: .venv,.tools
 
       - name: gitleaks
         uses: gitleaks/gitleaks-action@v2
