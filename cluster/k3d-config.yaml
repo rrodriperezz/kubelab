@@ -1,0 +1,45 @@
+---
+apiVersion: k3d.io/v1alpha5
+kind: Simple
+metadata:
+  name: plataforma
+
+servers: 1
+agents: 2
+
+image: rancher/k3s:v1.31.2-k3s1
+
+# 8080 y 8443 en vez de 80 y 443: los puertos privilegiados requeriren permisos
+# elevados y romperian el arranque sin sudo.
+ports:
+  - port: 8080:80
+    nodeFilters:
+      - loadbalancer
+  - port: 8443:443
+    nodeFilters:
+      - loadbalancer
+
+# Registry local que el proyecto de GitOps posterior necesita para publicar
+# imagenes sin salir a internet.
+registries:
+  create:
+    name: registry.localhost
+    host: "0.0.0.0"
+    hostPort: "5111"
+
+options:
+  k3s:
+    extraArgs:
+      # Traefik viene por defecto en k3s. Si queda activo compite con
+      # ingress-nginx por el puerto 80 y el Ingress devuelve 404 intermitente.
+      - arg: --disable=traefik
+        nodeFilters:
+          - server:*
+      # El loadbalancer de k3d ya publica los puertos del host; servicelb
+      # dejaria un segundo asignador de puertos compitiendo por lo mismo.
+      - arg: --disable=servicelb
+        nodeFilters:
+          - server:*
+  kubeconfig:
+    updateDefaultKubeconfig: true
+    switchCurrentContext: true
