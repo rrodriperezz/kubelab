@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Las verificaciones se llaman de forma indirecta desde esperar_a, que shellcheck
 # no puede seguir y marca como codigo muerto.
-# shellcheck disable=SC2317
+# shellcheck disable=SC2317,SC2329
 set -euo pipefail
 
 KUBECTL="${KUBECTL:-kubectl}"
