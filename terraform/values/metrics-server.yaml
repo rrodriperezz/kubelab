@@ -1,0 +1,14 @@
+---
+# En k3d el certificado del kubelet no es valido para el nombre por el que lo
+# resuleve metrics-server. Es una concesion al entorno local: en produccion se
+# arregla firmando los certificados del kubelet, nunca desactivando el chequeo.
+args:
+  - --kubelet-insecure-tls
+
+resources:
+  requests:
+    cpu: 20m
+    memory: 64Mi
+  limits:
+    cpu: 200m
+    memory: 200Mi

@@ -1,0 +1,36 @@
+---
+# Los CRDs se instalan con el chart y no aparte: si se instalan por separado,
+# un helm uninstall los deja huerfanos y el siguiente apply falla.
+crds:
+  enabled: true
+
+resources:
+  requests:
+    cpu: 10m
+    memory: 64Mi
+  limits:
+    cpu: 200m
+    memory: 256Mi
+
+webhook:
+  resources:
+    requests:
+      cpu: 10m
+      memory: 32Mi
+    limits:
+      cpu: 100m
+      memory: 128Mi
+
+cainjector:
+  resources:
+    requests:
+      cpu: 10m
+      memory: 64Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi
+
+# No hay stack de metricas todavia; habilitarlo crea un ServiceMonitor cuyo CRD
+# no existe y el release falla.
+prometheus:
+  enabled: false
