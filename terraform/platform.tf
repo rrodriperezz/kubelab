@@ -11,7 +11,7 @@ resource "helm_release" "ingress_nginx" {
   wait    = true
 
   # Un release a medio instalar deja el cluster en un estado que el siguiente
-  # apply no sabe reconciliar; atomic revierte y deja el error visible.
+  # apply no sabe reconcilar; atomic revierte y deja el error visible.
   atomic = true
 
   depends_on = [kubernetes_namespace_v1.plataforma]
