@@ -43,7 +43,14 @@ resource "kubernetes_deployment_v1" "demo" {
           # nginx-unprivileged escucha en 8080 y corre como usuario 101, que es lo
           # que permite el runAsNonRoot de arriba. La imagen oficial de nginx
           # necesita root para escribir el pid y no arrancaria.
-          image = "ghcr.io/nginxinc/nginx-unprivileged:1.27-alpine"
+          # El tag queda por legibilidad, pero lo que fija la version es el digest:
+          # un tag movil hace que dos nodos del cluster corran binarios distintos.
+          image = join("@", [
+            "ghcr.io/nginxinc/nginx-unprivileged:1.27-alpine",
+            "sha256:e234d4f7e346c098f7b22245690372382aded5be988611eb2c53ae62231eece7",
+          ])
+
+          image_pull_policy = "Always"
 
           port {
             name           = "http"
