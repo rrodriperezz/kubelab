@@ -168,6 +168,12 @@ resource "kubernetes_ingress_v1" "demo" {
 
     annotations = {
       "cert-manager.io/cluster-issuer" = "selfsigned"
+
+      # ingress-nginx redirige a https://demo.localtest.me sin puerto, y en local
+      # el 443 del cluster se publica en el 8443 del host: el redirect apuntaria a
+      # un puerto donde no escucha nadie. El sitio sigue disponible por TLS en
+      # https://demo.localtest.me:8443.
+      "nginx.ingress.kubernetes.io/ssl-redirect" = "false"
     }
   }
 
