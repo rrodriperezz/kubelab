@@ -97,7 +97,7 @@ hpa_con_metricas() {
   [ -n "$objetivos" ] && [ "$objetivos" != "null" ]
 }
 
-printf 'smoke test de la plataforma, contexto %s\n' "$CONTEXTO"
+printf 'smoke test de la plataforma, contexo %s\n' "$CONTEXTO"
 
 titulo 'nodos en Ready'
 if esperar_a "$TIMEOUT_CORTO" nodos_listos; then
