@@ -1,0 +1,4 @@
+# Los scripts se ejecutan dentro de contenedores Linux: CRLF los rompe con
+# "bad interpreter: /bin/bash^M".
+* text=auto eol=lf
+*.exe binary

@@ -1,0 +1,38 @@
+# Estado de Terraform: contiene los IDs reales del cluster y no se versiona
+*.tfstate
+*.tfstate.*
+*.tfstate.backup
+.terraform/
+.terraform.lock.hcl
+crash.log
+crash.*.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+*.tfvars
+*.tfvars.json
+!example.tfvars
+
+# Credenciales de acceso al cluster
+kubeconfig*
+*.kubeconfig
+.kube/
+
+# Herramientas locales de la maquina, no del repositorio
+.tools/
+.venv/
+__pycache__/
+
+# Notas de trabajo y specs que no forman parte del entregable.
+# README.md queda fuera de la exclusion porque si es parte del repositorio.
+/*.md
+!/README.md
+importante.txt
+
+# Sistema operativo y editores
+Thumbs.db
+desktop.ini
+.DS_Store
+.idea/
+.vscode/
