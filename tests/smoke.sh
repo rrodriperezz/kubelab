@@ -91,10 +91,13 @@ demo_responde() {
     "http://${DEMO_HOST}:${DEMO_PUERTO}/")" = "200" ]
 }
 
+# status.currentMetrics existe como lista vacia mientras el HPA no pudo medir
+# nada, asi que hay que bajar hasta el porcentaje o la verificacion pasa con
+# TARGETS en <unknown>.
 hpa_con_metricas() {
-  local objetivos
-  objetivos="$(k get hpa demo -n demo -o jsonpath='{.status.currentMetrics}')"
-  [ -n "$objetivos" ] && [ "$objetivos" != "null" ]
+  local uso
+  uso="$(k get hpa demo -n demo     -o jsonpath='{.status.currentMetrics[0].resource.current.averageUtilization}')"
+  [ -n "$uso" ] && [ "$uso" -ge 0 ] 2>/dev/null
 }
 
 printf 'smoke test de la plataforma, contexo %s\n' "$CONTEXTO"
