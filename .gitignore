@@ -25,10 +25,8 @@ kubeconfig*
 .venv/
 __pycache__/
 
-# Notas de trabajo y specs que no forman parte del entregable.
-# README.md queda fuera de la exclusion porque si es parte del repositorio.
-/*.md
-!/README.md
+# Documentacion y notas de trabajo: se mantienen en local, fuera del repositorio.
+*.md
 importante.txt
 
 # Sistema operativo y editores
