@@ -1,6 +1,6 @@
-# Ruta y contexto explicitos en vez de las variables de entorno implicitas
-# (KUBECONFIG, contexto actual): sin esto un apply puede terminar aplicando
-# sobre otro cluster que este seleccionado en la maquina.
+# Explicit path and context instead of the implicit environment (KUBECONFIG,
+# current context): without this an apply can end up running against whatever
+# other cluster happens to be selected on the machine.
 provider "kubernetes" {
   config_path    = pathexpand(var.kubeconfig_path)
   config_context = var.kube_context

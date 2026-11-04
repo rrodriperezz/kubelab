@@ -1,51 +1,51 @@
 variable "cluster_name" {
-  description = "Nombre del cluster k3d. Tiene que coincidir con cluster/k3d-config.yaml."
+  description = "Name of the k3d cluster. Must match cluster/k3d-config.yaml."
   type        = string
-  default     = "plataforma"
+  default     = "platform"
 }
 
 variable "kubeconfig_path" {
-  description = "Ruta al kubeconfig que usan los provedores de kubernetes y helm."
+  description = "Path to the kubeconfig used by the kubernetes and helm providers."
   type        = string
   default     = "~/.kube/config"
 }
 
 variable "kube_context" {
-  description = "Contexto dentro del kubeconfig. k3d lo nombra k3d-<cluster>."
+  description = "Context inside the kubeconfig. k3d names it k3d-<cluster>."
   type        = string
-  default     = "k3d-plataforma"
+  default     = "k3d-platform"
 }
 
 variable "base_domain" {
-  description = "Dominio base de los Ingress. localtest.me resuelve a 127.0.0.1."
+  description = "Base domain for the Ingresses. localtest.me resolves to 127.0.0.1."
   type        = string
   default     = "localtest.me"
 }
 
 variable "enable_demo_app" {
-  description = "Instala la aplicacion de ejemplo con su Ingress y su HPA."
+  description = "Install the sample app with its Ingress and HPA."
   type        = bool
   default     = true
 }
 
 variable "demo_replicas" {
-  description = "Replicas iniciales de la aplicacion de ejemplo."
+  description = "Initial replicas of the sample app."
   type        = number
   default     = 2
 
   validation {
     condition     = var.demo_replicas >= 1 && var.demo_replicas <= 10
-    error_message = "demo_replicas tiene que estar entre 1 y 10."
+    error_message = "demo_replicas must be between 1 and 10."
   }
 }
 
 variable "helm_timeout_seconds" {
-  description = "Espera maxima por release de Helm antes de abortar y hacer rollback."
+  description = "Maximum wait per Helm release before aborting and rolling back."
   type        = number
   default     = 300
 
   validation {
     condition     = var.helm_timeout_seconds >= 60
-    error_message = "helm_timeout_seconds tiene que ser de al menos 60."
+    error_message = "helm_timeout_seconds must be at least 60."
   }
 }

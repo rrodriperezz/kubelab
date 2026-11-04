@@ -1,7 +1,7 @@
 ---
-# En k3d el certificado del kubelet no es valido para el nombre por el que lo
-# resuleve metrics-server. Es una concesion al entorno local: en produccion se
-# arregla firmando los certificados del kubelet, nunca desactivando el chequeo.
+# In k3d the kubelet certificate is not valid for the name metrics-server uses
+# to reach it. This is a local-only concession: in production the fix is to sign
+# the kubelet certificates, never to turn the check off.
 args:
   - --kubelet-insecure-tls
 

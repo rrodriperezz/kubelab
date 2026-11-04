@@ -1,5 +1,5 @@
-# En produccion esto seria un ClusterIssuer ACME contra Let's Encrypt. Autofirmado
-# alcanza en local porque nadie externo tiene que confiar en el certificado.
+# In production this would be an ACME ClusterIssuer against Let's Encrypt.
+# Self-signed is enough locally because nobody outside has to trust the certificate.
 resource "kubernetes_manifest" "clusterissuer_selfsigned" {
   manifest = {
     apiVersion = "cert-manager.io/v1"
@@ -16,15 +16,15 @@ resource "kubernetes_manifest" "clusterissuer_selfsigned" {
   depends_on = [helm_release.cert_manager]
 }
 
-# Comodin en vez de un certificado por host: cualquier Ingress nuevo del entorno
-# reutiliza el mismo secreto sin esperar una emision.
+# Wildcard instead of one certificate per host: any new Ingress in the
+# environment reuses the same secret without waiting for an issuance.
 resource "kubernetes_manifest" "certificate_wildcard" {
   manifest = {
     apiVersion = "cert-manager.io/v1"
     kind       = "Certificate"
     metadata = {
       name      = "wildcard-base-domain"
-      namespace = kubernetes_namespace_v1.plataforma["demo"].metadata[0].name
+      namespace = kubernetes_namespace_v1.platform["demo"].metadata[0].name
       labels    = local.common_labels
     }
     spec = {

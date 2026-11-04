@@ -11,7 +11,7 @@ resource "kubernetes_deployment_v1" "demo" {
 
   metadata {
     name      = "demo"
-    namespace = kubernetes_namespace_v1.plataforma["demo"].metadata[0].name
+    namespace = kubernetes_namespace_v1.platform["demo"].metadata[0].name
     labels    = local.demo_labels
   }
 
@@ -40,11 +40,11 @@ resource "kubernetes_deployment_v1" "demo" {
 
         container {
           name = "nginx"
-          # nginx-unprivileged escucha en 8080 y corre como usuario 101, que es lo
-          # que permite el runAsNonRoot de arriba. La imagen oficial de nginx
-          # necesita root para escribir el pid y no arrancaria.
-          # El tag queda por legibilidad, pero lo que fija la version es el digest:
-          # un tag movil hace que dos nodos del cluster corran binarios distintos.
+          # nginx-unprivileged listens on 8080 and runs as user 101, which is what
+          # makes the runAsNonRoot above possible. The official nginx image needs
+          # root to write its pid and would not start.
+          # The tag stays for readability, but the digest is what pins the version:
+          # a moving tag lets two nodes of the cluster run different binaries.
           image = join("@", [
             "ghcr.io/nginxinc/nginx-unprivileged:1.27-alpine",
             "sha256:e234d4f7e346c098f7b22245690372382aded5be988611eb2c53ae62231eece7",
@@ -97,8 +97,8 @@ resource "kubernetes_deployment_v1" "demo" {
             }
           }
 
-          # Con el rootfs de solo lectura nginx no puede escribir sus temporales ni
-          # su pid, y entra en CrashLoopBackOff sin estos tres volumenes.
+          # With a read-only rootfs nginx cannot write its temp files or its pid,
+          # and goes into CrashLoopBackOff without these three volumes.
           volume_mount {
             name       = "tmp"
             mount_path = "/tmp"
@@ -139,7 +139,7 @@ resource "kubernetes_service_v1" "demo" {
 
   metadata {
     name      = "demo"
-    namespace = kubernetes_namespace_v1.plataforma["demo"].metadata[0].name
+    namespace = kubernetes_namespace_v1.platform["demo"].metadata[0].name
     labels    = local.demo_labels
   }
 
@@ -163,16 +163,16 @@ resource "kubernetes_ingress_v1" "demo" {
 
   metadata {
     name      = "demo"
-    namespace = kubernetes_namespace_v1.plataforma["demo"].metadata[0].name
+    namespace = kubernetes_namespace_v1.platform["demo"].metadata[0].name
     labels    = local.demo_labels
 
     annotations = {
       "cert-manager.io/cluster-issuer" = "selfsigned"
 
-      # ingress-nginx redirige a https://demo.localtest.me sin puerto, y en local
-      # el 443 del cluster se publica en el 8443 del host: el redirect apuntaria a
-      # un puerto donde no escucha nadie. El sitio sigue disponible por TLS en
-      # https://demo.localtest.me:8443.
+      # ingress-nginx redirects to https://demo.localtest.me without a port, and
+      # locally the cluster's 443 is published on the host's 8443: the redirect
+      # would point at a port nobody listens on. The site is still served over
+      # TLS at https://demo.localtest.me:8443.
       "nginx.ingress.kubernetes.io/ssl-redirect" = "false"
     }
   }
@@ -209,14 +209,14 @@ resource "kubernetes_ingress_v1" "demo" {
   depends_on = [helm_release.ingress_nginx, kubernetes_manifest.clusterissuer_selfsigned]
 }
 
-# El HPA existe para demostrar que metrics-server responde: sin metricas el
-# objetivo queda en <unknown> y el smoke test lo detecta.
+# The HPA exists to prove metrics-server answers: without metrics the target
+# stays at <unknown> and the smoke test catches it.
 resource "kubernetes_horizontal_pod_autoscaler_v2" "demo" {
   count = local.demo_enabled
 
   metadata {
     name      = "demo"
-    namespace = kubernetes_namespace_v1.plataforma["demo"].metadata[0].name
+    namespace = kubernetes_namespace_v1.platform["demo"].metadata[0].name
     labels    = local.demo_labels
   }
 

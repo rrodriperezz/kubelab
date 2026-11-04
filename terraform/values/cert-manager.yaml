@@ -1,6 +1,6 @@
 ---
-# Los CRDs se instalan con el chart y no aparte: si se instalan por separado,
-# un helm uninstall los deja huerfanos y el siguiente apply falla.
+# CRDs are installed with the chart, not separately: installed apart, a helm
+# uninstall leaves them orphaned and the next apply fails.
 crds:
   enabled: true
 
@@ -30,7 +30,7 @@ cainjector:
       cpu: 200m
       memory: 256Mi
 
-# No hay stack de metricas todavia; habilitarlo crea un ServiceMonitor cuyo CRD
-# no existe y el release falla.
+# There is no metrics stack yet; enabling this creates a ServiceMonitor whose
+# CRD does not exist and the release fails.
 prometheus:
   enabled: false

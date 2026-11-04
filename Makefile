@@ -2,57 +2,57 @@ SHELL := /usr/bin/env bash
 .SHELLFLAGS := -euo pipefail -c
 .DEFAULT_GOAL := help
 
-CLUSTER ?= plataforma
+CLUSTER ?= platform
 K3D_CONFIG := cluster/k3d-config.yaml
 TF := terraform -chdir=terraform
 TF_FLAGS := -input=false -no-color
 
 .PHONY: help cluster-up cluster-down init apply destroy test up down fmt validate clean
 
-help: ## Lista los objetivos disponibles
+help: ## List the available targets
 	@grep -hE '^[a-z][a-z-]*:.*##' $(MAKEFILE_LIST) | \
 		awk -F':.*##[[:space:]]*' '{ printf "%-14s %s\n", $$1, $$2 }'
 
-cluster-up: ## Crea el cluster k3d desde la configuracion declarativa
+cluster-up: ## Create the k3d cluster from the declarative config
 	k3d cluster create --config $(K3D_CONFIG) --wait
 
-cluster-down: ## Borra el cluster k3d y su registry
+cluster-down: ## Delete the k3d cluster and its registry
 	k3d cluster delete $(CLUSTER)
 
-init: ## Descarga los providers de Terraform
+init: ## Download the Terraform providers
 	$(TF) init $(TF_FLAGS)
 
-# Dos pasadas a proposito: kubernetes_manifest resuelve el esquema del recurso
-# durante el plan, asi que los CRDs de cert-manager tienen que existir antes de
-# que Terraform planifique el ClusterIssuer. depends_on ordena el apply, no el plan.
-apply: ## Instala la plataforma sobre el cluster
+# Two passes on purpose: kubernetes_manifest resolves the resource schema during
+# plan, so the cert-manager CRDs must exist before Terraform plans the
+# ClusterIssuer. depends_on orders the apply, not the plan.
+apply: ## Install the platform on the cluster
 	$(TF) apply $(TF_FLAGS) -auto-approve -target=helm_release.cert_manager
 	$(TF) apply $(TF_FLAGS) -auto-approve
 
-destroy: ## Desinstala la plataforma dejando el cluster en pie
+destroy: ## Uninstall the platform and keep the cluster running
 	$(TF) destroy $(TF_FLAGS) -auto-approve
 
-test: ## Corre el smoke test contra el cluster
+test: ## Run the smoke test against the cluster
 	bash tests/smoke.sh
 
-up: ## Cluster mas plataforma, de cero a listo
+up: ## Cluster plus platform, from zero to ready
 	$(MAKE) cluster-up
 	$(MAKE) init
 	$(MAKE) apply
 
-down: ## Deshace todo lo que hizo up
+down: ## Undo everything up did
 	-$(MAKE) destroy
 	$(MAKE) cluster-down
 
-fmt: ## Formatea los archivos de Terraform
+fmt: ## Format the Terraform files
 	$(TF) fmt -recursive
 
-validate: ## Chequea formato, sintaxis de Terraform, shell y YAML
+validate: ## Check formatting and Terraform, shell and YAML syntax
 	$(TF) fmt -check -recursive
 	$(TF) init -backend=false $(TF_FLAGS)
 	$(TF) validate
 	shellcheck tests/smoke.sh
 	yamllint -c .yamllint.yml cluster/ terraform/values/ .github/
 
-clean: ## Borra los artefactos locales de Terraform
+clean: ## Delete local Terraform artifacts
 	rm -rf terraform/.terraform terraform/tfplan

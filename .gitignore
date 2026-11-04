@@ -1,9 +1,9 @@
-# Estado de Terraform: contiene los IDs reales del cluster y no se versiona
+# Terraform state: holds the cluster's real IDs and is never committed
 *.tfstate
 *.tfstate.*
 *.tfstate.backup
-# .terraform.lock.hcl SI se versiona: es lo que fija el hash exacto de cada
-# provider y hace reproducible el init en otra maquina y en CI.
+# .terraform.lock.hcl IS committed: it pins the exact hash of every provider
+# and makes init reproducible on another machine and in CI.
 .terraform/
 crash.log
 crash.*.log
@@ -15,21 +15,22 @@ override.tf.json
 *.tfvars.json
 !example.tfvars
 
-# Credenciales de acceso al cluster
+# Cluster access credentials
 kubeconfig*
 *.kubeconfig
 .kube/
 
-# Herramientas locales de la maquina, no del repositorio
+# Machine-local tools, not part of the repository
 .tools/
 .venv/
 __pycache__/
 
-# Documentacion y notas de trabajo: se mantienen en local, fuera del repositorio.
+# Working notes stay local, out of the repository. The README is the exception.
 *.md
+!README.md
 importante.txt
 
-# Sistema operativo y editores
+# Operating system and editors
 Thumbs.db
 desktop.ini
 .DS_Store

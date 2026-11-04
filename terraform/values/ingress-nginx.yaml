@@ -1,16 +1,16 @@
 ---
 controller:
-  # El loadbalancer de k3d ya publica los puertos del host; un Service de tipo
-  # LoadBalancer aca quedaria en pending para siempre.
+  # The k3d loadbalancer already publishes the host ports; a LoadBalancer
+  # Service here would stay pending forever.
   service:
     type: ClusterIP
 
-  # El loadbalancer de k3d reparte las conexiones entre todos los nodos, asi que
-  # el controller tiene que estar escuchando en el puerto de cada uno.
+  # The k3d loadbalancer spreads connections across every node, so the
+  # controller has to listen on each node's port.
   kind: DaemonSet
 
-  # Sin hostPort no hay forma de llegar al controller desde el host, porque el
-  # Service es ClusterIP.
+  # Without hostPort there is no way to reach the controller from the host,
+  # because the Service is ClusterIP.
   hostPort:
     enabled: true
     ports:
@@ -20,8 +20,8 @@ controller:
   metrics:
     enabled: true
 
-  # Requests y limits declarados para que el scheduler tenga con que decidir y
-  # para que checkov no marque el contenedor como sin limites.
+  # Requests and limits are declared so the scheduler has something to decide
+  # on and checkov does not flag the container as unbounded.
   resources:
     requests:
       cpu: 100m
@@ -31,8 +31,8 @@ controller:
       memory: 512Mi
 
   config:
-    # Detras del proxy de k3d la IP de origen llega en X-Forwarded-For; sin esto
-    # los logs y las anotaciones de whitelist ven siempre la IP del loadbalancer.
+    # Behind the k3d proxy the client IP arrives in X-Forwarded-For; without this
+    # logs and allowlist annotations always see the loadbalancer's IP.
     use-forwarded-headers: "true"
 
   admissionWebhooks:

@@ -24,8 +24,8 @@ jobs:
       - uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: ${{ env.TERRAFORM_VERSION }}
-          # El wrapper reemplaza la salida de terraform por una version anotada y
-          # rompe cualquier paso que lea stdout.
+          # The wrapper replaces terraform's output with an annotated version and
+          # breaks any step that reads stdout.
           terraform_wrapper: false
 
       - name: terraform fmt
@@ -56,19 +56,19 @@ jobs:
           terraform_version: ${{ env.TERRAFORM_VERSION }}
           terraform_wrapper: false
 
-      - name: instalar k3d
+      - name: install k3d
         run: |
           curl -sfL https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh \
             | TAG=${{ env.K3D_VERSION }} bash
           k3d version
 
-      - name: levantar cluster y plataforma
+      - name: create cluster and platform
         run: make up
 
       - name: smoke test
         run: make test
 
-      - name: diagnostico si algo fallo
+      - name: diagnostics on failure
         if: failure()
         run: |
           kubectl get nodes -o wide || true
@@ -76,7 +76,7 @@ jobs:
           kubectl get certificate,clusterissuer -A || true
           kubectl describe hpa demo -n demo || true
 
-      - name: bajar todo
+      - name: tear down
         if: always()
         run: make down
 
@@ -88,8 +88,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          # Gitleaks recorre el historial completo; con el checkout superficial por
-          # defecto solo veria el ultimo commit.
+          # Gitleaks walks the full history; with the default shallow checkout it
+          # would only see the last commit.
           fetch-depth: 0
 
       - name: checkov
@@ -107,17 +107,17 @@ jobs:
           scan-ref: .
           severity: HIGH,CRITICAL
           exit-code: "1"
-          # Directorios de herramientas locales, no forman parte del repositorio.
+          # Local tool directories, not part of the repository.
           skip-dirs: .venv,.tools
 
-      # El binario directo en vez de gitleaks-action: la action escribe su reporte
-      # SARIF en el workspace y falla con "permission denied" en el runner.
+      # The plain binary instead of gitleaks-action: the action writes its SARIF
+      # report to the workspace and fails with "permission denied" on the runner.
       - name: gitleaks
         env:
           GITLEAKS_VERSION: 8.30.1
         run: |
           base=https://github.com/gitleaks/gitleaks/releases/download
-          archivo=gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz
-          curl -sfL -o /tmp/gitleaks.tar.gz "$base/v${GITLEAKS_VERSION}/$archivo"
+          archive=gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz
+          curl -sfL -o /tmp/gitleaks.tar.gz "$base/v${GITLEAKS_VERSION}/$archive"
           sudo tar -xzf /tmp/gitleaks.tar.gz -C /usr/local/bin gitleaks
           gitleaks detect --source . --no-banner --redact

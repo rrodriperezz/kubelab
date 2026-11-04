@@ -1,10 +1,10 @@
 locals {
-  # Las versiones viven aca y no dentro de cada helm_release para que outputs.tf
-  # pueda publicarlas sin duplicar el numero en dos lugares.
+  # Versions live here and not inside each helm_release so outputs.tf can
+  # publish them without duplicating the number in two places.
   chart_versions = {
-    ingress-nginx  = "4.11.3"  # verificado 2026-09-04
-    cert-manager   = "v1.16.1" # verificado 2026-09-04
-    metrics-server = "3.12.2"  # verificado 2026-09-04
+    ingress-nginx  = "4.11.3"  # verified 2026-09-04
+    cert-manager   = "v1.16.1" # verified 2026-09-04
+    metrics-server = "3.12.2"  # verified 2026-09-04
   }
 
   namespaces = ["ingress-nginx", "cert-manager", "monitoring", "demo"]
@@ -16,7 +16,7 @@ locals {
 
   demo_host = "demo.${var.base_domain}"
 
-  # El certificado se emite para el comodin, asi cualquier subdominio nuevo del
-  # entorno local reutiliza el mismo secreto sin volver a emitir.
+  # The certificate is issued for the wildcard, so any new subdomain in the
+  # local environment reuses the same secret without a new issuance.
   wildcard_domain = "*.${var.base_domain}"
 }

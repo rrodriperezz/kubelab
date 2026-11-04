@@ -2,15 +2,15 @@
 apiVersion: k3d.io/v1alpha5
 kind: Simple
 metadata:
-  name: plataforma
+  name: platform
 
 servers: 1
 agents: 2
 
 image: rancher/k3s:v1.31.2-k3s1
 
-# 8080 y 8443 en vez de 80 y 443: los puertos privilegiados requeriren permisos
-# elevados y romperian el arranque sin sudo.
+# 8080 and 8443 instead of 80 and 443: privileged ports need elevated
+# permissions and would break startup without sudo.
 ports:
   - port: 8080:80
     nodeFilters:
@@ -19,8 +19,8 @@ ports:
     nodeFilters:
       - loadbalancer
 
-# Registry local que el proyecto de GitOps posterior necesita para publicar
-# imagenes sin salir a internet.
+# Local registry the follow-up GitOps project needs to publish images
+# without going out to the internet.
 registries:
   create:
     name: registry.localhost
@@ -30,19 +30,19 @@ registries:
 options:
   k3s:
     extraArgs:
-      # Traefik viene por defecto en k3s. Si queda activo compite con
-      # ingress-nginx por el puerto 80 y el Ingress devuelve 404 intermitente.
+      # k3s ships Traefik by default. Left on, it fights ingress-nginx for
+      # port 80 and the Ingress returns intermittent 404s.
       - arg: --disable=traefik
         nodeFilters:
           - server:*
-      # El loadbalancer de k3d ya publica los puertos del host; servicelb
-      # dejaria un segundo asignador de puertos compitiendo por lo mismo.
+      # The k3d loadbalancer already publishes the host ports; servicelb
+      # would add a second port allocator competing for the same thing.
       - arg: --disable=servicelb
         nodeFilters:
           - server:*
-      # k3s trae su propio metrics-server y es dueño de ClusterRole
-      # system:metrics-server. Si queda activo, el chart de Helm aborta con
-      # "invalid ownership metadata" en vez de instalarse.
+      # k3s ships its own metrics-server and owns the ClusterRole
+      # system:metrics-server. Left on, the Helm chart aborts with
+      # "invalid ownership metadata" instead of installing.
       - arg: --disable=metrics-server
         nodeFilters:
           - server:*

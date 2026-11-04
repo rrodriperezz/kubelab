@@ -1,4 +1,4 @@
 #!/bin/sh
-# Las lineas de atribucion de herramienta no forman parte del historial de este
-# repositorio; el hook las borra antes de que lleguen al commit.
+# Tool attribution lines are not part of this repository's history; the hook
+# strips them before they reach the commit.
 sed -i -E "/^(Co-Authored-By|Co-authored-by):/d; /Generated with/d; /^Claude-Session:/d" "$1"

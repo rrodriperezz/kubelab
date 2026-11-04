@@ -1,4 +1,4 @@
-resource "kubernetes_namespace_v1" "plataforma" {
+resource "kubernetes_namespace_v1" "platform" {
   for_each = toset(local.namespaces)
 
   metadata {

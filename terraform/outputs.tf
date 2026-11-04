@@ -1,20 +1,20 @@
 output "cluster_name" {
-  description = "Nombre del cluster sobre el que se aplico la plataforma."
+  description = "Name of the cluster the platform was applied to."
   value       = var.cluster_name
 }
 
 output "demo_url" {
-  description = "URL de la aplicacion de ejemplo a traves del loadbalancer de k3d."
+  description = "URL of the sample app through the k3d loadbalancer."
   value       = var.enable_demo_app ? "http://${local.demo_host}:8080" : null
 }
 
 output "ingress_class" {
-  description = "IngressClass que atiende el trafico entrante."
+  description = "IngressClass that serves incoming traffic."
   value       = "nginx"
 }
 
 output "installed_charts" {
-  description = "Version efectiva de cada release de plataforma."
+  description = "Effective version of each platform release."
   value = {
     ingress-nginx  = helm_release.ingress_nginx.version
     cert-manager   = helm_release.cert_manager.version
