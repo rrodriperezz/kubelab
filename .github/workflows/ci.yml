@@ -100,15 +100,18 @@ jobs:
           quiet: true
           soft_fail: false
 
+      # Pinned binary instead of trivy-action: the action resolves its own
+      # installer at runtime and broke this job without any change in the repo.
       - name: trivy config
-        uses: aquasecurity/trivy-action@v0.36.0
-        with:
-          scan-type: config
-          scan-ref: .
-          severity: HIGH,CRITICAL
-          exit-code: "1"
-          # Local tool directories, not part of the repository.
-          skip-dirs: .venv,.tools
+        env:
+          TRIVY_VERSION: 0.70.0
+        run: |
+          base=https://github.com/aquasecurity/trivy/releases/download
+          archive=trivy_${TRIVY_VERSION}_Linux-64bit.tar.gz
+          curl -sfL -o /tmp/trivy.tar.gz "$base/v${TRIVY_VERSION}/$archive"
+          sudo tar -xzf /tmp/trivy.tar.gz -C /usr/local/bin trivy
+          # Local tool directories are skipped: they are not part of the repository.
+          trivy config --severity HIGH,CRITICAL --exit-code 1 --skip-dirs .venv,.tools .
 
       # The plain binary instead of gitleaks-action: the action writes its SARIF
       # report to the workspace and fails with "permission denied" on the runner.
